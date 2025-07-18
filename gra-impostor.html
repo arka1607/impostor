@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Gra Impostor – 5 graczy</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f0f0f0;
+      padding: 20px;
+    }
+    #game, #reveal, #result {
+      display: none;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="setup">
+    <h2>Wpisz imiona graczy:</h2>
+    <input type="text" placeholder="Gracz 1" id="p1"><br>
+    <input type="text" placeholder="Gracz 2" id="p2"><br>
+    <input type="text" placeholder="Gracz 3" id="p3"><br>
+    <input type="text" placeholder="Gracz 4" id="p4"><br>
+    <input type="text" placeholder="Gracz 5" id="p5"><br>
+    <button onclick="startGame()">Start</button>
+  </div>
+
+  <div id="game">
+    <h2>Kolej na: <span id="currentName"></span></h2>
+    <p>Oddaj telefon tej osobie i kliknij poniżej:</p>
+    <button onclick="revealWord()">Pokaż słowo</button>
+  </div>
+
+  <div id="reveal">
+    <h2 id="revealText"></h2>
+    <button onclick="nextPlayer()">Ukryj i przekaż telefon</button>
+  </div>
+
+  <div id="result">
+    <h2>Wszyscy gotowi!</h2>
+    <p>Rozpocznijcie rozmowę i spróbujcie znaleźć impostora 👀</p>
+    <button onclick="location.reload()">Zagraj ponownie</button>
+  </div>
+
+  <script>
+    const words = [
+      "pizza", "kot", "telefon", "lody", "rower", "kino", "muzeum", "słoń", "kaczka", "laptop",
+      "chleb", "grzebień", "klucz", "zegarek", "banan", "ogórek", "makaron", "papryka", "sałatka", "pierogi",
+      "pomidor", "zupa", "komputer", "drzewo", "las", "plaża", "góry", "jezioro", "dom", "teatr",
+      "szkoła", "restauracja", "szpital", "lotnisko", "dworzec", "biblioteka", "sklep", "centrum", "stadion", "park",
+      "lekarz", "nauczyciel", "strażak", "piekarz", "kierowca", "aktor", "muzyk", "dentysta", "weterynarz", "informatyk",
+      "architekt", "kelner", "kosmetyczka", "fotograf", "tłumacz", "sportowiec", "pies", "lew", "tygrys", "żółw",
+      "papuga", "koń", "zebra", "kangur", "wilk", "niedźwiedź", "lama", "jeż", "delfin", "foka",
+      "sarna", "bóbr", "królik", "miłość", "radość", "strach", "spokój", "hałas", "czas", "cisza",
+      "marzenie", "tęsknota", "zaskoczenie", "gniew", "przyjaźń", "nuda", "smutek", "emocja", "wspomnienie", "cierpliwość",
+      "wiara", "wolność", "lampka", "kubek", "długopis", "książka", "plecak", "notes", "nożyczki", "drukarka",
+      "kabel", "krzesło", "stół", "lusterko", "szczotka", "grzaniec", "pianino", "mikrofon", "gitara", "piosenka",
+      "nuty", "scena", "koncert", "instrument", "pianista", "kurczak", "sernik", "schabowy", "ziemniak", "wafelek",
+      "jogurt", "śliwka", "groszek", "marchewka", "pociąg", "samochód", "samolot", "taksówka", "tramwaj", "helikopter",
+      "pilot", "mechanik", "bibliotekarz", "perfumy", "szafa", "komoda", "biurko", "telewizor", "kamera", "torebka",
+      "talerz", "łyżka", "widelec", "nóż", "miska", "wazon", "skarpeta", "but", "kurtka", "czapka",
+      "ręcznik", "siatka", "ławka", "parasol", "czekolada", "cukier", "czosnek", "cebula", "grill", "notatnik",
+      "papier", "toster", "czajnik", "czajka", "żarówka", "czajniczek", "fotel", "sofa", "lustro", "filiżanka",
+      "drabina", "wieszak", "kaloryfer", "wiadro", "szklanka", "torebka", "pudełko", "czujnik", "namiot", "rowerek",
+      "trampolina", "plac zabaw", "zjeżdżalnia", "huśtawka", "piaskownica", "rowerzysta", "piłkarz", "koszykarz", "nurkowanie", "jazda konna",
+      "jazda na nartach", "saneczkarstwo", "snowboard", "łyżwiarstwo", "tenis", "ping-pong", "badminton", "szachy", "gra planszowa", "gra karciana"
+    ];
+
+    let players = [];
+    let impostorIndex;
+    let chosenWord = "";
+    let currentPlayer = 0;
+
+    function startGame() {
+      players = [
+        document.getElementById("p1").value || "Gracz 1",
+        document.getElementById("p2").value || "Gracz 2",
+        document.getElementById("p3").value || "Gracz 3",
+        document.getElementById("p4").value || "Gracz 4",
+        document.getElementById("p5").value || "Gracz 5"
+      ];
+      impostorIndex = Math.floor(Math.random() * 5);
+      chosenWord = words[Math.floor(Math.random() * words.length)];
+
+      document.getElementById("setup").style.display = "none";
+      document.getElementById("game").style.display = "block";
+      document.getElementById("currentName").innerText = players[currentPlayer];
+    }
+
+    function revealWord() {
+      document.getElementById("game").style.display = "none";
+      document.getElementById("reveal").style.display = "block";
+
+      if (currentPlayer === impostorIndex) {
+        document.getElementById("revealText").innerText = "Jesteś IMPOSTOREM!";
+      } else {
+        document.getElementById("revealText").innerText = "Twoje słowo to: " + chosenWord;
+      }
+    }
+
+    function nextPlayer() {
+      currentPlayer++;
+      document.getElementById("reveal").style.display = "none";
+
+      if (currentPlayer < players.length) {
+        document.getElementById("game").style.display = "block";
+        document.getElementById("currentName").innerText = players[currentPlayer];
+      } else {
+        document.getElementById("result").style.display = "block";
+      }
+    }
+  </script>
+
+</body>
+</html>
+
